@@ -1,0 +1,211 @@
+/* ===== Variables : toutes les couleurs au même endroit ===== */
+:root {
+  --ink: #16143a;        /* texte principal */
+  --paper: #fbfaff;      /* fond de page */
+  --surface: #ffffff;    /* champs, cartes */
+  --mist: #ecebf8;       /* fonds discrets */
+  --line: #d7d5ea;       /* bordures */
+  --muted: #5d5b7a;      /* texte secondaire */
+  --indigo: #4e54c8;     /* couleur de la marque */
+  --indigo-dark: #3a3fa8;
+  --link: #4e54c8;
+  --ok: #17794f;
+  --bad: #b3263e;
+  --bad-bg: #fdecef;
+  --intro-bg: #16143a;   /* panneau gauche : identique dans les 2 thèmes */
+  --radius: 10px;
+}
+/* Thème sombre : on ne change que les variables, le reste suit automatiquement */
+[data-theme="dark"] {
+  --ink: #ecebff; --paper: #0f0e24; --surface: #1a1838; --mist: #26244d;
+  --line: #3a3866; --muted: #a6a4cc; --link: #a9adff;
+  --ok: #4cc38a; --bad: #ff7b8f; --bad-bg: #3a1a28;
+  --intro-bg: #0a0919;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Figtree', system-ui, sans-serif;
+  background: var(--paper); color: var(--ink); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; transition: background .3s, color .3s;
+}
+h1, h2, h3, .brand { font-family: 'Bricolage Grotesque', 'Figtree', sans-serif; }
+[hidden] { display: none !important; }
+
+.shell { min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; }
+
+/* ===== Panneau gauche ===== */
+.intro {
+  background: var(--intro-bg); color: #fff;
+  padding: clamp(32px, 5vw, 64px);
+  display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
+}
+.brand { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+.brand span { color: #a9adff; }
+.intro h1 {
+  font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.08;
+  letter-spacing: -0.03em; font-weight: 700; max-width: 15ch; margin-bottom: 32px;
+}
+
+/* Démo du hachage : le moment mémorable de la page (animée par app.js) */
+.demo {
+  border: 1px solid rgba(255, 255, 255, .16); border-radius: 12px;
+  padding: 18px 20px; max-width: 460px; background: rgba(255, 255, 255, .04);
+}
+.demo-label { font-size: .85rem; color: #a9adff; margin-bottom: 4px; }
+.demo-line {
+  font: 500 .95rem/1.5 ui-monospace, 'Cascadia Code', Consolas, monospace;
+  min-height: 1.5em; word-break: break-all;
+}
+.demo-line + .demo-label { margin-top: 16px; }
+.demo-hash { color: #8fe3b8; }
+.demo-plain::after { content: ''; display: inline-block; width: 2px; height: 1em; background: #fff; margin-left: 2px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.facts { list-style: none; display: grid; gap: 12px; max-width: 42ch; margin-top: 28px; }
+.facts li { padding-left: 22px; position: relative; color: #cfd0f5; }
+.facts li::before { content: ''; position: absolute; left: 0; top: .6em; width: 10px; height: 2px; background: #a9adff; }
+
+/* ===== Panneau droit ===== */
+.panel { position: relative; display: grid; place-items: center; padding: 72px 24px 32px; }
+#authView, #dashView { width: 100%; max-width: 400px; }
+
+.theme-toggle {
+  position: absolute; top: 20px; right: 20px;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+  font: 600 .85rem 'Figtree', sans-serif; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  transition: background .2s;
+}
+.theme-toggle:hover { background: var(--mist); }
+
+/* ===== Onglets : une pastille glisse d'un onglet à l'autre ===== */
+.tabs {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--mist); border-radius: var(--radius); padding: 4px; margin-bottom: 32px;
+}
+.tabs::before { /* la pastille */
+  content: ''; position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px);
+  background: var(--surface); border-radius: 7px; box-shadow: 0 1px 3px rgba(22, 20, 58, .2);
+  transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+}
+.tabs[data-mode="register"]::before { transform: translateX(100%); }
+.tabs button {
+  position: relative; border: 0; background: transparent; padding: 10px; border-radius: 7px;
+  font: 600 .95rem 'Figtree', sans-serif; color: var(--muted); cursor: pointer; transition: color .2s;
+}
+.tabs button[aria-selected="true"] { color: var(--ink); }
+
+h2 { font-size: 1.9rem; letter-spacing: -0.02em; line-height: 1.15; }
+.sub { color: var(--muted); margin: 6px 0 28px; }
+
+/* Apparition douce d'un formulaire quand on change d'onglet */
+form:not([hidden]) { animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } }
+
+/* Secousse quand il y a une erreur (classe ajoutée par app.js) */
+form.shake { animation: shake .4s; }
+@keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+
+/* ===== Champs de formulaire ===== */
+.field { margin-bottom: 18px; }
+label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
+input {
+  width: 100%; padding: 12px 14px; font: inherit; color: var(--ink);
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius);
+  transition: border-color .15s, box-shadow .15s;
+}
+input:hover { border-color: var(--muted); }
+input:focus-visible { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(78, 84, 200, .3); }
+input[aria-invalid="true"] { border-color: var(--bad); }
+
+.pw { position: relative; }
+.pw input { padding-right: 84px; }
+.toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  border: 0; background: none; color: var(--link); font: 600 .85rem 'Figtree', sans-serif;
+  padding: 6px 10px; border-radius: 6px; cursor: pointer;
+}
+.toggle:hover { background: var(--mist); }
+.toggle:focus-visible, .tabs button:focus-visible, .btn:focus-visible, .theme-toggle:focus-visible { outline: 3px solid rgba(110, 116, 235, .6); outline-offset: 2px; }
+
+/* Jauge de robustesse : data-level (0 à 4) est défini par app.js */
+.meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px; }
+.meter i { height: 4px; border-radius: 2px; background: var(--line); transition: background .25s; }
+.meter[data-level="1"] i:nth-child(-n+1) { background: var(--bad); }
+.meter[data-level="2"] i:nth-child(-n+2) { background: #c77b14; }
+.meter[data-level="3"] i:nth-child(-n+3) { background: #7a9a1a; }
+.meter[data-level="4"] i { background: var(--ok); }
+.hint { font-size: .85rem; color: var(--muted); margin-top: 6px; }
+
+.error { color: var(--bad); font-size: .85rem; margin-top: 6px; }
+.error:empty { display: none; }
+.form-error { margin: 0 0 14px; padding: 10px 12px; background: var(--bad-bg); border-radius: 8px; }
+
+/* ===== Boutons ===== */
+.btn {
+  width: 100%; min-height: 48px; padding: 13px; border: 0; border-radius: var(--radius);
+  background: var(--indigo); color: #fff; font: 600 1rem 'Figtree', sans-serif; cursor: pointer;
+  display: flex; justify-content: center; align-items: center; gap: 10px;
+  transition: background .25s, transform .1s;
+}
+.btn:hover { background: var(--indigo-dark); }
+.btn:active { transform: scale(.99); }
+.btn[disabled] { opacity: .75; cursor: progress; }
+.btn[disabled]::before { /* spinner pendant l'envoi */
+  content: ''; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .4); border-top-color: #fff; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Succès : le bouton devient vert avec une coche (classe ajoutée par app.js) */
+.btn.success { background: var(--ok); pointer-events: none; }
+.btn.success span { display: none; }
+.btn.success::before {
+  content: ''; width: 8px; height: 15px; border: solid #fff; border-width: 0 3px 3px 0;
+  transform: rotate(45deg) translateY(-2px); animation: pop .35s cubic-bezier(.3, 1.6, .5, 1);
+}
+@keyframes pop { from { transform: rotate(45deg) translateY(-2px) scale(0); } }
+
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); margin-top: 28px; }
+.btn.ghost:hover { background: var(--mist); }
+
+/* ===== Espace connecté : les éléments apparaissent l'un après l'autre ===== */
+.avatar {
+  width: 56px; height: 56px; border-radius: 50%; background: var(--indigo); color: #fff;
+  display: grid; place-items: center; font: 700 1.3rem 'Bricolage Grotesque', sans-serif; margin-bottom: 18px;
+}
+#dashView:not([hidden]) > * { animation: rise .5s cubic-bezier(.2, .8, .2, 1) both; }
+#dashView > :nth-child(2) { animation-delay: .06s; }
+#dashView > :nth-child(3) { animation-delay: .12s; }
+#dashView > :nth-child(4) { animation-delay: .18s; }
+#dashView > :nth-child(5) { animation-delay: .24s; }
+#dashView > :nth-child(6) { animation-delay: .3s; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+
+#dashView h3 { font-size: 1rem; margin-bottom: 10px; }
+.events { list-style: none; border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.events li { padding: 12px 14px; font-size: .9rem; display: flex; justify-content: space-between; gap: 12px; }
+.events li + li { border-top: 1px solid var(--line); }
+.events small { color: var(--muted); }
+
+/* ===== Notification ===== */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px);
+  background: #16143a; color: #fff; border: 1px solid rgba(255, 255, 255, .15);
+  padding: 12px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ===== Mobile et tablette ===== */
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  .intro { gap: 20px; padding: 24px; }
+  .intro h1 { font-size: 1.6rem; margin-bottom: 0; max-width: none; }
+  .demo, .facts { display: none; }
+  .panel { align-items: start; }
+}
+/* Respect des personnes qui désactivent les animations dans leur système */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+}

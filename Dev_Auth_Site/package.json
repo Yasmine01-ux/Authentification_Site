@@ -1,0 +1,24 @@
+{
+  "name": "dev-auth-site",
+  "version": "1.0.0",
+  "description": "Authentification sécurisée : Express, SQLite, bcrypt, JWT en cookie httpOnly",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "test": "node --test test.js",
+    "db": "node db/show-db.js"
+  },
+  "engines": {
+    "node": ">=20.18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
